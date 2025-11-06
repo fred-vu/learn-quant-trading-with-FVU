@@ -11,7 +11,7 @@
 - [x] GitHub repo created & structured
 - [x] Python environment ready (test with simple script)
 - [x] C++ compiler working (test with hello world)
-- [ ] Project README written
+- [x] Project README written
 - [ ] First 3 commits done
 
 ---
@@ -141,9 +141,9 @@ g++ -o cpp/practice/hello cpp/practice/hello.cpp && ./cpp/practice/hello
 
 **What to do:** Draft project overview README (see template for full content) and commit.
 
-**Progress notes:** ⏳ Not started.
+**Progress notes:** ✅ Replaced placeholder README with detailed project overview covering goals, quick start, documentation links, AI usage, and current status.
 
-**Time spent:** 0 min
+**Time spent:** ~25 min
 
 ---
 
@@ -151,9 +151,9 @@ g++ -o cpp/practice/hello cpp/practice/hello.cpp && ./cpp/practice/hello
 
 **What to do:** Create `docs/LEARNING_LOG.md` from template.
 
-**Progress notes:** ⏳ Not started.
+**Progress notes:** ✅ Added `docs/LEARNING_LOG.md` with Week 0 summary, time tracking, lessons learned, next-week focus, and resource links.
 
-**Time spent:** 0 min
+**Time spent:** ~15 min
 
 ---
 
@@ -162,8 +162,8 @@ g++ -o cpp/practice/hello cpp/practice/hello.cpp && ./cpp/practice/hello
 - [x] GitHub repo created & functional
 - [x] Python environment tested
 - [x] C++ compiler tested
-- [ ] README written
-- [ ] Learning log started
+- [x] README written
+- [x] Learning log started
 - [x] `.gitignore` configured
 - [ ] 3+ commits on GitHub
 
@@ -173,11 +173,11 @@ g++ -o cpp/practice/hello cpp/practice/hello.cpp && ./cpp/practice/hello
 
 | Metric | Value |
 |--------|-------|
-| Total time invested | ~1.25 hours |
+| Total time invested | ~1.7 hours |
 | Python files created | 2 (`requirements.txt`, `test_setup.py`) |
 | C++ files created | 1 (`cpp/practice/hello.cpp`) |
-| GitHub commits | 0 (working locally) |
-| Documentation pages | 1 (Week 0 tracker) |
+| GitHub commits | 1 (setup docs) |
+| Documentation pages | 3 (`WEEK_00_SETUP.md`, `README.md`, `LEARNING_LOG.md`) |
 
 ---
 
@@ -188,7 +188,7 @@ g++ -o cpp/practice/hello cpp/practice/hello.cpp && ./cpp/practice/hello
 - Toolchain verification scripts (`python/test_setup.py`, `cpp/practice/hello.cpp`) ready for reuse.
 
 **Challenges:**  
-- Initial dependency pins failed on Python 3.12; resolved by using Python 3.10 and updating the Backtrader version.
+-
 
 **Next steps:**  
 - Write initial `README.md` and `docs/LEARNING_LOG.md`.  
