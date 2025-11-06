@@ -142,7 +142,7 @@ Include docstrings and type hints for all functions.
 **Validation:**
 - [x] CSV file created
 - [x] Data looks reasonable
-- [ ] Commit: `git add data/AAPL.csv && git commit -m "Add AAPL historical data"`
+- [x] Commit: `git add data/AAPL.csv && git commit -m "Add AAPL historical data"`
 
 **Time spent:** ~30 min
 
