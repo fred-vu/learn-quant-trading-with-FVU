@@ -45,6 +45,7 @@ make
 - `docs/WEEK_01_PYTHON_BACKTEST.md` – Next-week plan for the backtest engine
 - `docs/MASTER_PROGRESS.md` – Timeline and metrics overview
 - `docs/weekly_templates.md` – Source templates for future weeks
+- `python/data_utils/stock_data.py` – Reusable downloader/validator for OHLCV data
 
 ## 🤖 Using AI Agents
 

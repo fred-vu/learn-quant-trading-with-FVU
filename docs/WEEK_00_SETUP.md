@@ -165,7 +165,7 @@ g++ -o cpp/practice/hello cpp/practice/hello.cpp && ./cpp/practice/hello
 - [x] README written
 - [x] Learning log started
 - [x] `.gitignore` configured
-- [ ] 3+ commits on GitHub
+- [x] 3+ commits on GitHub
 
 ---
 
@@ -199,10 +199,10 @@ g++ -o cpp/practice/hello cpp/practice/hello.cpp && ./cpp/practice/hello
 
 ## ✨ End of Week Summary (to complete on Sunday)
 
-**Total time this week:** ____ hours  
-**Commits made:** ____  
-**Blocker encountered:** [ ] Yes [ ] No — Notes: _____  
-**Confidence for Week 1:** 1 ☆☆☆☆☆ 5 — Rate: ____  
+**Total time this week:** _2___ hours  
+**Commits made:** __3__  
+**Blocker encountered:** [ ] Yes [x] No — Notes: _____  
+**Confidence for Week 1:** 1 ☆☆☆☆☆ 5 — Rate: __4__  
 
 **Next week:**  
 - Start Python backtest engine.  

@@ -3,3 +3,4 @@ numpy==2.3.4
 matplotlib==3.10.7
 backtrader==1.9.76.123
 yfinance==0.2.66
+scikit-learn==1.7.2
