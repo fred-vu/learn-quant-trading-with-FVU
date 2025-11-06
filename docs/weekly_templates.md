@@ -70,11 +70,11 @@ Then update weekly and commit to GitHub.
 1. Create `python/` folder
 2. Create `requirements.txt`:
    ```
-   pandas==1.5.3
-   numpy==1.24.0
-   matplotlib==3.7.0
-   backtrader==1.9.78
-   yfinance==0.2.18
+  pandas==2.3.3
+   numpy==2.3.4
+   matplotlib==3.10.7
+   backtrader==1.9.76.123
+   yfinance==0.2.66
    ```
 3. Create virtual environment:
    ```bash

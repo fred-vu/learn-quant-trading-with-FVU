@@ -51,18 +51,18 @@
 
 **What to do:**
 1. Create `python/` folder
-2. Create `requirements.txt`:
+2. Create `requirements.txt`: 
    ```
-   pandas==1.5.3
-   numpy==1.24.0
-   matplotlib==3.7.0
-   backtrader==1.9.78.123
-   yfinance==0.2.18
+   pandas==2.3.3
+   numpy==2.3.4
+   matplotlib==3.10.7
+   backtrader==1.9.76.123
+   yfinance==0.2.66
    ```
 3. Create virtual environment:
    ```bash
    cd python
-   python3.10 -m venv venv
+   python3 -m venv venv
    source venv/bin/activate  # Linux/Mac
    # or venv\Scripts\activate  # Windows
    pip install -r requirements.txt
@@ -81,13 +81,13 @@
 6. update .gitignore with the untrack files, folder. then commit
 7. Commit: `git add -A && git commit -m "Python environment setup with dependencies"`
 
-**Progress notes:** ✅ Switched to Python 3.10 for compatibility, created virtualenv, installed deps (adjusted `backtrader` pin to `1.9.78.123`), and ran `python test_setup.py` successfully.
+**Progress notes:** ✅ Curently run Python 3.12 , created virtualenv, installed deps, and ran `python test_setup.py` successfully.
 
 **Result:**
 - [x] Virtual environment activated
 - [x] All packages installed
 - [x] Test script runs successfully
-- [ ] Commit pushed
+- [x] Commit pushed
 
 **Time spent:** ~40 min
 
@@ -106,6 +106,7 @@ g++ --version
 # Linux: sudo apt install g++
 ```
 
+
 **Test hello world:**
 ```cpp
 // cpp/practice/hello.cpp
@@ -122,6 +123,9 @@ g++ -o hello cpp/practice/hello.cpp
 ```
 
 **Progress notes:** ✅ Verified `g++ (Ubuntu 11.4.0-1ubuntu1~22.04.2)` under WSL, compiled `cpp/practice/hello.cpp`, and executed the binary.
+
+
+g++ -o cpp/practice/hello cpp/practice/hello.cpp && ./cpp/practice/hello
 
 **Validation:**
 - [x] Compiler installed
