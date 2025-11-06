@@ -1,0 +1,18 @@
+*.csv
+*.o
+*.so
+__pycache__/
+.DS_Store
+
+# Python virtual environments
+venv/
+python/venv/
+python/.venv/
+
+# Build outputs
+cpp/build/
+build_hello
+
+# Python bytecode
+*.pyc
+*.pyo
