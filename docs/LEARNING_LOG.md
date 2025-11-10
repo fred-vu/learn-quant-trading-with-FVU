@@ -80,6 +80,45 @@ This log captures weekly progress snapshots. Update each Sunday evening to keep 
 
 ---
 
-**Status:** 🔄 Week 0 ongoing  
+**Status:** ✅ Week 0 done  
 **Confidence Level:** 4☆☆☆☆/5 — Environments ready, next steps clear  
 **Recommendation:** Start Week 1 tasks once README polish is finalized.
+
+---
+
+## Week 1: Python Backtest + MA Experiments
+
+- ✅ Delivered `SimpleBacktest` engine with configurable SMA/EMA/WMA/WEMA signals, PnL metrics, and CSV exports.
+- ✅ Built command-line utilities to run tests, compare MA variants, and visualize equity curves.
+- ✅ Downloaded and validated multi-asset datasets (AAPL, BTC-USD, SOL-USD) with custom scripts.
+- ✅ Explored moving-average pairs (20/50, 21/63, 7/30, 14/60, 30/90) across equities and crypto; logged performance deltas.
+
+### Time Invested
+- Total: ~9 hours
+- Coding: ~6 hours (backtest engine, scripts, indicators)
+- Research/Data: ~2 hours (MA theory, crypto data nuances)
+- Documentation: ~1 hour (README + week summaries)
+
+### Commits / Key Artifacts
+1. `Add SimpleBacktest SMA/EMA crossover engine`
+2. `Create test runner + trade CSV export`
+3. `Add MA comparison + plotting scripts`
+4. `Download BTC/SOL crypto data`
+5. `Run WEMA experiments & update docs`
+
+### Lessons Learned
+- Sharpened understanding of SMA vs EMA vs WMA vs WEMA trade-offs (responsiveness vs stability).
+- Parameterizing fast/slow windows is critical—crypto required shorter spans (e.g., 7/30) to react quickly, while equities behaved well with 20/50 or 21/63.
+- WEMA (EMA fed through WMA) produced strong BTC results but offered marginal gains on SOL, highlighting ticker-specific tuning.
+- Having a reusable comparison script accelerates experimentation and keeps artifacts reproducible (CSV metrics + equity overlays).
+
+### Next Week Focus
+- Extend the backtester with transaction cost modeling and position sizing.
+- Add automated unit tests for indicator calculations and trade accounting.
+- Begin drafting multi-strategy scaffolding (e.g., combine MA crossover with RSI filters).
+
+---
+
+**Status:** ✅ Week 1 complete  
+**Confidence Level:** 4☆☆☆☆/5 — Backtest foundation solid; ready to layer strategy variations.  
+**Recommendation:** Proceed to Week 2 tasks (strategy diversification + parameter sweeps).

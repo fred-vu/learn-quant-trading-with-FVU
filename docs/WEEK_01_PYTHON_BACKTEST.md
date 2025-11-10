@@ -22,6 +22,12 @@
 - [ ] Output results to CSV
 - [ ] 5+ commits with working code
 
+- 📁 **Support Artifacts:** Week 1 outputs are organized under `results/week1/`:
+  - Logs → `results/week1/logs/`
+  - Trade exports → `results/week1/trades/`
+  - Equity curves (single/multi-line) → `results/week1/equity_curves/`
+  - Metric comparisons → `results/week1/comparisons/`
+
 ---
 
 ## 📚 Learning Path
@@ -187,9 +193,13 @@ Class SimpleBacktest:
   * Sorts by date ascending
   * Error: if file not found
   
-- calculate_indicators() → adds SMA columns
-  * self.data['SMA20'] = rolling average 20 days
-  * self.data['SMA50'] = rolling average 50 days
+- calculate_indicators() → adds moving-average columns
+  * Accept a parameter (e.g., `moving_average="sma"`, `"ema"`, `"wma"`, `"wema"`)
+  * Windows are configurable via `fast_window` / `slow_window` (default 20/50)
+  * For SMA: `df['Close'].rolling(window=fast_window).mean()`
+  * For EMA: `df['Close'].ewm(span=fast_window, adjust=False).mean()`
+  * For WMA: linearly weight the last N closes (recent price highest weight) using `rolling(...).apply()`
+  * For WEMA: run EMA first, then apply the WMA weighting to emphasize the most recent EMA values
   
 - generate_signals() → adds signal column
   * 1 if SMA20 > SMA50 (BUY)
@@ -274,14 +284,16 @@ if __name__ == '__main__':
     print(results)
 ```
 
+**Progress notes:** ✅ Implemented `python/backtester/simple_backtest.py` with `SimpleBacktest` class (load → indicators → signals → run → metrics + CSV export). Includes data validation, SMA/EMA/WMA/WEMA generation (configurable windows via `fast_window` + `slow_window`), long-only trade simulation, Sharpe/return/drawdown metrics, and docstrings. Imported via `backtester.SimpleBacktest` for reuse.
+
 **Validation:**
-- [ ] Code runs without errors
-- [ ] Produces reasonable results
-- [ ] Docstrings for all methods
-- [ ] Handles missing data gracefully
+- [x] Code runs without errors (`PYTHONPATH=python python - <<...>` test with `data/AAPL.csv`)
+- [x] Produces reasonable results (EMA test: 10 trades, ~1.32% return; WMA test: 15 trades, ~1.12% return; WEMA test: 9 trades, ~1.05% return on AAPL)
+- [x] Docstrings for all methods
+- [x] Handles missing data gracefully (runtime guards)
 - [ ] Commit: `git add python/backtester/ && git commit -m "Backtest engine v1 - MA strategy"`
 
-**Time spent:** ____ min
+**Time spent:** ~90 min
 
 ---
 
@@ -310,9 +322,14 @@ if __name__ == '__main__':
    print("=" * 50)
    ```
 
-2. Run: `python scripts/test_backtest.py`
+2. Run SMA/EMA/WMA/WEMA variants with flexible windows, e.g.:
+   - `python scripts/test_backtest.py --ma-type ema --fast-window 10 --slow-window 40`
+   - `python scripts/test_backtest.py --ma-type wma`
+   - `python scripts/test_backtest.py --ma-type wema`
 
-3. Save output to file: `python scripts/test_backtest.py > results/backtest_output.txt`
+3. Save output to file (per variant): `python scripts/test_backtest.py --ma-type ema > results/week1/logs/backtest_output.txt`
+
+4. Bonus comparison helper: `python/scripts/compare_ma_types.py` runs all MA variants, exports metrics table (`results/week1/comparisons/ma_comparison_<ticker>.csv`), and plots a multi-line equity curve (`results/week1/equity_curves/equity_curve_comparison_<ticker>.png`).
 
 **AI Agent Prompt:**
 ```
@@ -328,13 +345,13 @@ if __name__ == '__main__':
    - Max drawdown: X%
    - Sharpe ratio: X
 
-4. Also save this output to results/backtest_output.txt"
+4. Also save this output to `results/week1/logs/backtest_output.txt`"
 ```
 
-**Validation:**
-- [ ] Script runs
-- [ ] Output looks reasonable
-- [ ] Metrics make sense
+- **Validation:**
+- [x] Script runs with SMA/EMA options
+- [x] Output prints initial/final capital plus metrics
+- [x] Metrics make sense
 - [ ] Commit: `git add python/scripts/test_backtest.py && git commit -m "Test backtest - results look good"`
 
 **Time spent:** ____ min
@@ -359,7 +376,7 @@ def export_trades_to_csv(self, filename):
 
 Then add to test script:
 ```python
-bt.export_trades_to_csv('results/backtest_trades.csv')
+bt.export_trades_to_csv('results/week1/trades/backtest_trades.csv')
 ```
 
 **CSV output should have columns:**
@@ -383,17 +400,17 @@ bt.export_trades_to_csv('results/backtest_trades.csv')
    - Print: 'Exported X trades to filename'
 
 2. Use in test script:
-   bt.export_trades_to_csv('results/AAPL_trades.csv')
+   bt.export_trades_to_csv('results/week1/trades/AAPL_trades.csv')
 
 3. Verify: CSV readable in Excel/spreadsheet"
 ```
 
 **Validation:**
-- [ ] CSV file created: `results/AAPL_trades.csv`
+- [ ] CSV file created: `results/week1/trades/AAPL_trades.csv`
 - [ ] Contains all trades
 - [ ] Columns correct
 - [ ] Can open in Excel
-- [ ] Commit: `git add results/ && git commit -m "Export backtest trades to CSV"`
+- [ ] Commit: `git add results/week1/trades && git commit -m "Export backtest trades to CSV"`
 
 **Time spent:** ____ min
 
@@ -410,7 +427,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # Load backtest results
-results = pd.read_csv('results/backtest_trades.csv')
+results = pd.read_csv('results/week1/trades/backtest_trades.csv')
 
 # Plot: cumulative PnL over time
 plt.figure(figsize=(12, 6))
@@ -419,8 +436,8 @@ plt.title('Cumulative PnL - AAPL Backtest')
 plt.xlabel('Trade Number')
 plt.ylabel('Cumulative PnL ($)')
 plt.grid(True)
-plt.savefig('results/equity_curve.png', dpi=150)
-print("✓ Chart saved to results/equity_curve.png")
+plt.savefig('results/week1/equity_curves/equity_curve.png', dpi=150)
+print("✓ Chart saved to results/week1/equity_curves/equity_curve.png")
 ```
 
 **AI Agent Prompt:**
@@ -434,7 +451,7 @@ print("✓ Chart saved to results/equity_curve.png")
    - Y-axis: cumulative PnL
    - Title: 'Backtest Equity Curve - AAPL'
    
-4. Save to results/equity_curve.png
+4. Save to `results/week1/equity_curves/equity_curve.png`
 5. Print: 'Chart saved!'
 
 Use matplotlib"
@@ -443,8 +460,8 @@ Use matplotlib"
 **Validation:**
 - [ ] Chart created
 - [ ] Shows cumulative PnL over time
-- [ ] File saved: `results/equity_curve.png`
-- [ ] Commit: `git add results/equity_curve.png && git commit -m "Add equity curve visualization"`
+- [ ] File saved: `results/week1/equity_curves/equity_curve.png`
+- [ ] Commit: `git add results/week1/equity_curves/equity_curve.png && git commit -m "Add equity curve visualization"`
 
 **Time spent:** ____ min
 
