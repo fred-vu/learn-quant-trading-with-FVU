@@ -1,11 +1,11 @@
 """
-Simple moving-average crossover backtest engine.
+Simple backtest engine with configurable strategies.
 
 Implements the Week 1 requirement for a lightweight engine that:
     * Loads OHLCV data from CSV.
-    * Calculates SMA(20) and SMA(50).
+    * Calculates indicators (MA crossovers, RSI + Bollinger signals, etc.).
     * Generates buy/sell/hold signals.
-    * Simulates long-only trades and records trade statistics.
+    * Simulates trades (long-only or long/short) and records trade statistics.
     * Exposes aggregate metrics (total return, drawdown, Sharpe, etc.).
 """
 
@@ -45,7 +45,7 @@ class Trade:
 
 
 class SimpleBacktest:
-    """Moving-average (SMA, EMA, WMA, or WEMA) crossover backtest."""
+    """Moving-average crossover or RSI+Bollinger mean-reversion backtest."""
 
     def __init__(
         self,
@@ -55,6 +55,15 @@ class SimpleBacktest:
         moving_average: str = "sma",
         fast_window: int = 20,
         slow_window: int = 50,
+        strategy: str = "ma_crossover",
+        allow_short: Optional[bool] = None,
+        rsi_period: int = 14,
+        bollinger_window: int = 20,
+        bollinger_std: float = 2.0,
+        rsi_long_entry: float = 25.0,
+        rsi_long_exit: float = 55.0,
+        rsi_short_entry: float = 75.0,
+        rsi_short_exit: float = 45.0,
     ) -> None:
         """
         Args:
@@ -64,6 +73,15 @@ class SimpleBacktest:
             moving_average: One of "sma", "ema", "wma", "wema" for indicator calculation.
             fast_window: Lookback window for the fast moving average.
             slow_window: Lookback window for the slow moving average.
+            strategy: "ma_crossover" or "rsi_bollinger".
+            allow_short: Whether shorts are allowed. Defaults to True for RSI strategy, False otherwise.
+            rsi_period: Lookback window for RSI (used in RSI strategy).
+            bollinger_window: Window for Bollinger band mid-line.
+            bollinger_std: Standard deviation multiple for Bollinger bands.
+            rsi_long_entry: RSI threshold for opening longs.
+            rsi_long_exit: RSI threshold for closing longs.
+            rsi_short_entry: RSI threshold for opening shorts.
+            rsi_short_exit: RSI threshold for closing shorts.
         """
         self.csv_file = csv_file
         self.initial_capital = float(initial_capital)
@@ -80,6 +98,28 @@ class SimpleBacktest:
         prefix = self.moving_average.upper()
         self.fast_col = f"{prefix}{self.fast_window}"
         self.slow_col = f"{prefix}{self.slow_window}"
+        self.strategy = strategy.lower()
+        if self.strategy not in {"ma_crossover", "rsi_bollinger"}:
+            raise ValueError("strategy must be 'ma_crossover' or 'rsi_bollinger'.")
+        if allow_short is None:
+            self.allow_short = self.strategy == "rsi_bollinger"
+        else:
+            self.allow_short = bool(allow_short)
+        self.rsi_period = int(rsi_period)
+        self.bollinger_window = int(bollinger_window)
+        if self.bollinger_window <= 0:
+            raise ValueError("bollinger_window must be a positive integer.")
+        self.bollinger_std = float(bollinger_std)
+        if self.bollinger_std <= 0:
+            raise ValueError("bollinger_std must be positive.")
+        self.rsi_long_entry = float(rsi_long_entry)
+        self.rsi_long_exit = float(rsi_long_exit)
+        self.rsi_short_entry = float(rsi_short_entry)
+        self.rsi_short_exit = float(rsi_short_exit)
+        self.rsi_col = f"RSI_{self.rsi_period}"
+        self.bb_mid_col = f"BB_MID_{self.bollinger_window}"
+        self.bb_upper_col = f"BB_UPPER_{self.bollinger_window}"
+        self.bb_lower_col = f"BB_LOWER_{self.bollinger_window}"
         self.data: pd.DataFrame = pd.DataFrame()
         self.trades: List[Trade] = []
         self._equity_curve: pd.Series = pd.Series(dtype=float)
@@ -109,17 +149,33 @@ class SimpleBacktest:
         """Add fast/slow MA columns based on the configured windows."""
         self._ensure_data_loaded()
         close = self.data["Close"]
-        self.data[self.fast_col] = self._compute_moving_average(close, self.fast_window)
-        self.data[self.slow_col] = self._compute_moving_average(close, self.slow_window)
+        if self.strategy == "ma_crossover":
+            self.data[self.fast_col] = self._compute_moving_average(close, self.fast_window)
+            self.data[self.slow_col] = self._compute_moving_average(close, self.slow_window)
+        elif self.strategy == "rsi_bollinger":
+            self.data[self.bb_mid_col] = close.rolling(
+                window=self.bollinger_window, min_periods=self.bollinger_window
+            ).mean()
+            rolling_std = close.rolling(
+                window=self.bollinger_window, min_periods=self.bollinger_window
+            ).std(ddof=0)
+            self.data[self.bb_upper_col] = self.data[self.bb_mid_col] + self.bollinger_std * rolling_std
+            self.data[self.bb_lower_col] = self.data[self.bb_mid_col] - self.bollinger_std * rolling_std
+            self.data[self.rsi_col] = self._compute_rsi(close, self.rsi_period)
+        else:
+            raise RuntimeError(f"Unsupported strategy: {self.strategy}")
 
     def generate_signals(self) -> None:
         """Create buy/sell/hold signals based on SMA crossovers."""
         self._ensure_indicators()
-        fast = self.data[self.fast_col]
-        slow = self.data[self.slow_col]
-        signal = np.where(fast > slow, 1, -1)
-        signal = np.where(fast.isna() | slow.isna(), 0, signal)
-        self.data["signal"] = signal
+        if self.strategy == "ma_crossover":
+            fast = self.data[self.fast_col]
+            slow = self.data[self.slow_col]
+            signal = np.where(fast > slow, 1, -1)
+            signal = np.where(fast.isna() | slow.isna(), 0, signal)
+            self.data["signal"] = signal
+        else:
+            self.data["signal"] = self._generate_rsi_bollinger_signals()
 
     # ------------------------------------------------------------------ #
     # Backtest execution
@@ -140,28 +196,53 @@ class SimpleBacktest:
             date = pd.Timestamp(row["Date"])
             signal = int(row["signal"])
 
-            # Enter long position.
-            if signal == 1 and position == 0:
-                position = self.position_size
-                entry_price = price
-                entry_date = date
-                cash -= price * position
+            if signal > 0:
+                # Close short positions before entering long.
+                if position < 0:
+                    trade = self._close_trade(price, date, entry_price, entry_date, position)
+                    self.trades.append(trade)
+                    cash += price * position
+                    position = 0
+                    entry_price = None
+                    entry_date = None
+                if position == 0:
+                    position = self.position_size
+                    entry_price = price
+                    entry_date = date
+                    cash -= price * position
 
-            # Exit long position.
-            elif signal == -1 and position > 0:
-                trade = self._close_trade(price, date, entry_price, entry_date, position)
-                self.trades.append(trade)
-                cash += price * position
-                position = 0
-                entry_price = None
-                entry_date = None
+            elif signal < 0:
+                # Exit any open long.
+                if position > 0:
+                    trade = self._close_trade(price, date, entry_price, entry_date, position)
+                    self.trades.append(trade)
+                    cash += price * position
+                    position = 0
+                    entry_price = None
+                    entry_date = None
+                # Enter short if allowed and currently flat.
+                if self.allow_short and position == 0:
+                    position = -self.position_size
+                    entry_price = price
+                    entry_date = date
+                    cash -= price * position  # subtracting a negative adds cash
+
+            else:
+                # Signal to be flat: close any open position.
+                if position != 0:
+                    trade = self._close_trade(price, date, entry_price, entry_date, position)
+                    self.trades.append(trade)
+                    cash += price * position
+                    position = 0
+                    entry_price = None
+                    entry_date = None
 
             equity = cash + position * price
             equity_values.append(equity)
             equity_dates.append(date)
 
         # Close any open position at the final price.
-        if position > 0 and entry_price is not None and entry_date is not None:
+        if position != 0 and entry_price is not None and entry_date is not None:
             last_price = float(self.data.iloc[-1]["Close"])
             last_date = pd.Timestamp(self.data.iloc[-1]["Date"])
             trade = self._close_trade(last_price, last_date, entry_price, entry_date, position)
@@ -247,6 +328,69 @@ class SimpleBacktest:
             raw=True,
         )
 
+    @staticmethod
+    def _compute_rsi(series: pd.Series, period: int) -> pd.Series:
+        """Compute the Relative Strength Index."""
+        delta = series.diff()
+        gain = delta.clip(lower=0.0)
+        loss = -delta.clip(upper=0.0)
+        avg_gain = gain.ewm(alpha=1 / period, adjust=False, min_periods=period).mean()
+        avg_loss = loss.ewm(alpha=1 / period, adjust=False, min_periods=period).mean()
+        rs = avg_gain / avg_loss.replace(0, np.nan)
+        rsi = 100 - (100 / (1 + rs))
+        return rsi
+
+    def _generate_rsi_bollinger_signals(self) -> pd.Series:
+        """Generate +/-1/0 signals based on RSI and Bollinger band rules."""
+        signals: List[int] = []
+        position = 0
+        for _, row in self.data.iterrows():
+            price = row["Close"]
+            rsi = row[self.rsi_col]
+            mid = row[self.bb_mid_col]
+            lower = row[self.bb_lower_col]
+            upper = row[self.bb_upper_col]
+            entry_long = (
+                pd.notna(rsi)
+                and pd.notna(lower)
+                and rsi <= self.rsi_long_entry
+                and price <= lower
+            )
+            entry_short = (
+                pd.notna(rsi)
+                and pd.notna(upper)
+                and rsi >= self.rsi_short_entry
+                and price >= upper
+            )
+            exit_long = position == 1 and (
+                (pd.notna(rsi) and rsi >= self.rsi_long_exit)
+                or (pd.notna(mid) and price >= mid)
+            )
+            exit_short = position == -1 and (
+                (pd.notna(rsi) and rsi <= self.rsi_short_exit)
+                or (pd.notna(mid) and price <= mid)
+            )
+
+            if position == 0:
+                if entry_long:
+                    position = 1
+                elif entry_short and self.allow_short:
+                    position = -1
+            elif position == 1:
+                if exit_long:
+                    if entry_short and self.allow_short:
+                        position = -1
+                    else:
+                        position = 0
+            elif position == -1:
+                if exit_short:
+                    if entry_long:
+                        position = 1
+                    else:
+                        position = 0
+            signals.append(position)
+        return pd.Series(signals, index=self.data.index, dtype=int)
+
     def get_results(self) -> Dict[str, float]:
         """Return the metrics dictionary."""
         if not self._results:
@@ -291,8 +435,18 @@ class SimpleBacktest:
 
     def _ensure_indicators(self) -> None:
         self._ensure_data_loaded()
-        if self.fast_col not in self.data or self.slow_col not in self.data:
-            raise RuntimeError("Indicators not calculated. Call calculate_indicators().")
+        if self.strategy == "ma_crossover":
+            if self.fast_col not in self.data or self.slow_col not in self.data:
+                raise RuntimeError("Indicators not calculated. Call calculate_indicators().")
+        else:
+            required = {
+                self.bb_mid_col,
+                self.bb_upper_col,
+                self.bb_lower_col,
+                self.rsi_col,
+            }
+            if any(col not in self.data for col in required):
+                raise RuntimeError("RSI/Bollinger indicators missing. Call calculate_indicators().")
 
     def _ensure_signals(self) -> None:
         self._ensure_indicators()

@@ -14,13 +14,13 @@
 
 ## 🎯 Goals This Week
 
-- [ ] Simple backtest engine written (100-150 lines)
+- [x] Simple backtest engine written (100-150 lines)
 - [x] Load historical CSV data
-- [ ] Calculate technical indicators (SMA)
-- [ ] Generate trading signals
-- [ ] Calculate basic metrics (total return, trades)
-- [ ] Output results to CSV
-- [ ] 5+ commits with working code
+- [x] Calculate technical indicators (SMA)
+- [x] Generate trading signals
+- [x] Calculate basic metrics (total return, trades)
+- [x] Output results to CSV
+- [x] 5+ commits with working code
 
 - 📁 **Support Artifacts:** Week 1 outputs are organized under `results/week1/`:
   - Logs → `results/week1/logs/`
@@ -58,9 +58,9 @@ Keep explanation simple, show working code"
 ```
 
 **Notes:**
-- [ ] Understand what SMA means
-- [ ] Know how to use .rolling().mean()
-- [ ] Can load CSV into DataFrame
+- [x] Understand what SMA means
+- [x] Know how to use .rolling().mean()
+- [x] Can load CSV into DataFrame
 
 ---
 
@@ -85,9 +85,9 @@ Keep explanation simple, show working code"
 2. Run: `python data/download_data.py`
 
 3. Verify:
-   - [ ] File `data/AAPL.csv` exists
-   - [ ] ~1250 rows (5 years of trading days)
-   - [ ] Columns: Date, Open, High, Low, Close, Adj Close, Volume
+   - [x] File `data/AAPL.csv` exists
+   - [x] ~1250 rows (5 years of trading days)
+   - [x] Columns: Date, Open, High, Low, Close, Adj Close, Volume
 
 **AI Agent Prompt:**
 ```
@@ -291,7 +291,7 @@ if __name__ == '__main__':
 - [x] Produces reasonable results (EMA test: 10 trades, ~1.32% return; WMA test: 15 trades, ~1.12% return; WEMA test: 9 trades, ~1.05% return on AAPL)
 - [x] Docstrings for all methods
 - [x] Handles missing data gracefully (runtime guards)
-- [ ] Commit: `git add python/backtester/ && git commit -m "Backtest engine v1 - MA strategy"`
+- [x] Commit: `git add python/backtester/ && git commit -m "Backtest engine v1 - MA strategy"`
 
 **Time spent:** ~90 min
 
@@ -352,7 +352,27 @@ if __name__ == '__main__':
 - [x] Script runs with SMA/EMA options
 - [x] Output prints initial/final capital plus metrics
 - [x] Metrics make sense
-- [ ] Commit: `git add python/scripts/test_backtest.py && git commit -m "Test backtest - results look good"`
+- [x] Commit: `git add python/scripts/test_backtest.py && git commit -m "Test backtest - results look good"`
+
+**RSI + Bollinger run example:**
+
+```bash
+cd python
+python scripts/test_backtest.py \
+  --strategy rsi_bollinger \
+  --data ../data/week1/NVDA.csv \
+  --rsi-period 14 \
+  --rsi-long-entry 25 --rsi-long-exit 55 \
+  --rsi-short-entry 75 --rsi-short-exit 45 \
+  --bollinger-window 20 --bollinger-std 2.0
+```
+
+**Config-file driven run:**
+
+```bash
+cd python
+python scripts/test_backtest.py --config ../python/configs/btc_rsi_bollinger_noshort.json
+```
 
 **Time spent:** ____ min
 
@@ -406,11 +426,11 @@ bt.export_trades_to_csv('results/week1/trades/backtest_trades.csv')
 ```
 
 **Validation:**
-- [ ] CSV file created: `results/week1/trades/AAPL_trades.csv`
-- [ ] Contains all trades
-- [ ] Columns correct
-- [ ] Can open in Excel
-- [ ] Commit: `git add results/week1/trades && git commit -m "Export backtest trades to CSV"`
+- [x] CSV file created: `results/week1/trades/AAPL_trades.csv`
+- [x] Contains all trades
+- [x] Columns correct
+- [x] Can open in Excel
+- [x] Commit: `git add results/week1/trades && git commit -m "Export backtest trades to CSV"`
 
 **Time spent:** ____ min
 
@@ -458,10 +478,10 @@ Use matplotlib"
 ```
 
 **Validation:**
-- [ ] Chart created
-- [ ] Shows cumulative PnL over time
-- [ ] File saved: `results/week1/equity_curves/equity_curve.png`
-- [ ] Commit: `git add results/week1/equity_curves/equity_curve.png && git commit -m "Add equity curve visualization"`
+- [x] Chart created
+- [x] Shows cumulative PnL over time
+- [x] File saved: `results/week1/equity_curves/equity_curve.png`
+- [x] Commit: `git add results/week1/equity_curves/equity_curve.png && git commit -m "Add equity curve visualization"`
 
 **Time spent:** ____ min
 
@@ -469,14 +489,14 @@ Use matplotlib"
 
 ## ✅ Weekly Checklist
 
-- [ ] Backtest engine coded (SimpleBacktest class)
-- [ ] AAPL data loaded correctly
-- [ ] Indicators calculated (SMA20, SMA50)
-- [ ] Signals generated
-- [ ] Backtest runs without errors
-- [ ] Results exported to CSV
-- [ ] Equity curve visualization created
-- [ ] 5+ commits made
+- [x] Backtest engine coded (SimpleBacktest class)
+- [x] AAPL data loaded correctly
+- [x] Indicators calculated (SMA20, SMA50)
+- [x] Signals generated
+- [x] Backtest runs without errors
+- [x] Results exported to CSV
+- [x] Equity curve visualization created
+- [x] 5+ commits made
 
 ---
 
@@ -529,6 +549,27 @@ Results: 62% win rate, 18.5% return 📈
 
 ---
 
+## Strategy Variations (Week 2 Prep)
+
+| Strategy | Setup | Current Best Params | Notes |
+|----------|-------|---------------------|-------|
+| **MA Crossover** | Trend-following | `ma_type=sma`, `fast/slow=20/50` (AAPL), alternative WEMA 21/63 (BTC) | Baseline engine validation; produces steady, well-documented trades. |
+| **RSI + Bollinger MR** | Mean-reversion | BTC long-only, `RSI 25→65`, `Bollinger window=14`, `std=2.0`, `shorts disabled` | Without shorts the strategy returned +148% over 2020-2025; re-enable shorts only with stricter thresholds (RSI ≥ 85 + band re-entry). |
+| **RSI + Bollinger (Equities)** | Mean-reversion | NVDA tests with defaults underperformed | Use as comparative case study for Week 2 parameter sweeps / regime filters. |
+
+**Suggested Week 2 experiments:**
+- **US large-cap equities:** SPY or AAPL with SMA50/200 vs EMA21/63 crossovers to confirm regime differences between tech and index ETFs.
+- **US growth index:** QQQ with WEMA(14/60) crossover plus RSI filter (only take trades if RSI between 40-70) to reduce whipsaws.
+- **Mean reversion on mega-cap stocks:** NVDA/MSFT using RSI(2) or RSI(5) pullbacks combined with 20-day Bollinger bands to see whether shorter windows improve signal frequency.
+- **US indices mean reversion:** Dow Jones ETF (DIA) or Russell 2000 ETF (IWM) with Bollinger(20, 2.5) and RSI 30/60 thresholds; compare performance to BTC tests to highlight asset-class sensitivity.
+- **Beginner-friendly add-ons:** MACD(12,26,9) crossovers on SPY (trend), Donchian 20-day breakout on QQQ (momentum), and ATR(14) trailing stops layered on top of the MA crossover to practice risk control.
+- **Volatility throttles:** Use ATR filters (enter only if ATR% of price > 2%) on SOL or NVDA to learn how to gate trades when volatility is too low/high.
+- **Session-based tests:** For US indices, run separate backtests on pandemic vs post-pandemic slices (split data at 2022-01-01) to see how strategies behave in different macro regimes.
+
+Use this grid as the launchpad for Week 2 experimentation: extend `test_backtest.py` with CLI presets, save logs under `results/week2/`, and layer cost/risk modeling on top of these base configs.
+
+---
+
 ## 🔗 Resources Used
 
 - [Pandas documentation](https://pandas.pydata.org/docs/)
@@ -539,7 +580,7 @@ Results: 62% win rate, 18.5% return 📈
 
 **Status:** 🔄 In Progress / ✅ Complete  
 **Confidence Level:** 1 ☆☆☆☆☆ 5 - Rate: ____  
-**Ready for Week 2-3:** [ ] Yes [ ] No  
+**Ready for Week 2-3:** [x] Yes [ ] No  
 
 **Next week:** Multi-strategy framework + parameter optimization
 

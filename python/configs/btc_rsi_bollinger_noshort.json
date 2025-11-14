@@ -1,0 +1,15 @@
+{
+  "strategy": "rsi_bollinger",
+  "data": "../data/week1/BTC_USD_2020-01-01_2025-11-01.csv",
+  "capital": 10000,
+  "position_size": 1,
+  "allow_short": false,
+  "rsi_period": 14,
+  "rsi_long_entry": 25,
+  "rsi_long_exit": 65,
+  "rsi_short_entry": 75,
+  "rsi_short_exit": 55,
+  "bollinger_window": 14,
+  "bollinger_std": 2.0,
+  "trades_csv": "../results/week1/trades/btc_rsi_bollinger_config_trades.csv"
+}

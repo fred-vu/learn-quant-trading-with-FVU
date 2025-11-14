@@ -92,6 +92,8 @@ This log captures weekly progress snapshots. Update each Sunday evening to keep 
 - ✅ Built command-line utilities to run tests, compare MA variants, and visualize equity curves.
 - ✅ Downloaded and validated multi-asset datasets (AAPL, BTC-USD, SOL-USD) with custom scripts.
 - ✅ Explored moving-average pairs (20/50, 21/63, 7/30, 14/60, 30/90) across equities and crypto; logged performance deltas.
+- ✅ Added an RSI + Bollinger mean-reversion mode (with CLI-configurable thresholds) and benchmarked it on NVDA vs BTC; best combo so far is BTC long-only with RSI 25↗65 exits using 14-day bands.
+- ✅ Introduced JSON-based run configs (e.g., `python/configs/btc_rsi_bollinger_noshort.json`), so `python scripts/test_backtest.py --config <file>` reproduces tuned strategies without retyping CLI arguments.
 
 ### Time Invested
 - Total: ~9 hours
@@ -111,6 +113,8 @@ This log captures weekly progress snapshots. Update each Sunday evening to keep 
 - Parameterizing fast/slow windows is critical—crypto required shorter spans (e.g., 7/30) to react quickly, while equities behaved well with 20/50 or 21/63.
 - WEMA (EMA fed through WMA) produced strong BTC results but offered marginal gains on SOL, highlighting ticker-specific tuning.
 - Having a reusable comparison script accelerates experimentation and keeps artifacts reproducible (CSV metrics + equity overlays).
+- Mean-reversion strategies need tight guardrails: disabling shorts on BTC and widening RSI exit bands flipped the RSI+Bollinger setup from -400% to +148% return, proving how sensitive the system is to regime alignment.
+- Config files keep experiments reproducible: cataloging each ticker’s parameters (data path, thresholds, output files) prevents typos and will make Week 2 sweeps across SPY/QQQ/IWM much faster.
 
 ### Next Week Focus
 - Extend the backtester with transaction cost modeling and position sizing.

@@ -1,0 +1,21 @@
+============================================================
+BACKTEST RESULTS
+============================================================
+Initial Capital (USD):............... $10,000.00
+Final Capital (USD):................. $-31,637.45
+Strategy:............................ Rsi Bollinger
+RSI Period:.......................... 14
+RSI Long Entry/Exit:................. 25.0/55.0
+RSI Short Entry/Exit:................ 75.0/45.0
+Bollinger Window/Std:................ 20/2.0
+Short Selling Enabled:............... Yes
+------------------------------------------------------------
+Total Trades............................ 21
+Winning Trades.......................... 9
+Losing Trades........................... 12
+Win Rate................................ 42.86
+Total Return............................ -416.37
+Max Drawdown............................ -475.26
+Sharpe Ratio............................ -0.32
+============================================================
+Exported 21 trades to /home/fredvu/learn-quant-trading-with-FVU/results/week1/trades/btc_rsi_bollinger_trades.csv
