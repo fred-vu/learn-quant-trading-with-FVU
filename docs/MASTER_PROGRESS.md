@@ -14,7 +14,7 @@
 ## Cumulative Metrics
 
 - Week 0: 3 commits, 0 LOC
-- Week 2: 8 commits, 300 LOC Python
+- Week 2: 12 commits, 450 LOC Python (WEMA/RSI/ATR add-ons, MACD/Donchian, volatility gating)
 - Week 4: 16 commits, 300 LOC Python + 250 LOC C++
 - Week 6: 30 commits, 800 LOC Python + 600 LOC C++
 - Week 11: 80 commits, 3500 LOC Python + 2500 LOC C++

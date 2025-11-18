@@ -126,3 +126,48 @@ This log captures weekly progress snapshots. Update each Sunday evening to keep 
 **Status:** ✅ Week 1 complete  
 **Confidence Level:** 4☆☆☆☆/5 — Backtest foundation solid; ready to layer strategy variations.  
 **Recommendation:** Proceed to Week 2 tasks (strategy diversification + parameter sweeps).
+
+## Week 2: Index ETFs, WEMA sweeps, and RSI gates
+
+- ✅ Ported the Week 1 backtester to SPY + QQQ datasets and automated eight MA crossover variants (SMA, EMA, WEMA) per ticker with reproducible configs.
+- ✅ Logged per-run trade CSVs, CLI outputs, and equity curves under `results/week2/` so every experiment (20/50 through 5/30) has matching artifacts.
+- ✅ Identified WEMA21/63 (SPY) and WEMA14/60 (QQQ) as the highest-return crossovers; WEMA5/30 emerged as the best Sharpe on SPY thanks to shallow drawdowns.
+- ✅ Added an RSI gating option to the MA engine plus CLI flags, then benchmarked WEMA14/60 with RSI filters (35-65, 40-70, 45-65) to reduce whipsaws.
+- ✅ Built comparison configs (`python/configs/week2_*_runs.json`) so running `python scripts/compare_configs.py --config ...` regenerates summary CSVs + combined plots on demand.
+- ✅ Layered beginner-friendly strategies (MACD, Donchian, ATR trailing stops) plus ATR% volatility gates and RSI exit filters across SPY/QQQ/BTC/NVDA/META/MSFT/PLTR.
+
+### Time Invested
+- Total: ~14 hours
+- Coding: ~7 hours (MACD/Donchian/ATR enhancements, ATR% gates, CLI updates)
+- Research/Data: ~4 hours (strategy testing across tickers)
+- Documentation + write-up: ~3 hours (blog update + logs)
+
+### Time Invested
+- Total: ~11 hours *(before add-ons; see updated totals above)*
+- Coding: ~5 hours (engine enhancements, RSI gating, automation scripts)
+- Research/Data: ~3 hours (ETF regime analysis, RSI filter design)
+- Documentation + write-up: ~3 hours (learning log + blog post)
+
+### Commits / Key Artifacts
+1. `Add compare_configs automation + SPY presets`
+2. `Catalog QQQ MA sweeps + plots`
+3. `Implement RSI gating for MA crossover`
+4. `Add SPY/QQQ WEMA14 RSI filter configs`
+5. `Document Week 2 insights (learning log + blog)`
+6. `Add MACD/Donchian strategies + ATR stops/gates`
+7. `Run ATR% volatility experiments on NVDA/META/MSFT/PLTR`
+
+### Lessons Learned
+- Broad-market ETFs prefer smoother windows: SPY rewarded slower WEMAs (21/63) while QQQ responded best to 14/60 due to tech momentum.
+- RSI filters shine when the underlying market trends strongly (QQQ). Keeping RSI between 40-70 boosted Sharpe to 1.0 while lowering drawdown, proving the value of gating entries to “neutral” momentum ranges.
+- The same RSI idea on SPY offered marginal benefit—returns stayed flat while trade count tripled—highlighting that filters must be ticker-specific.
+- Automating both trade exports and equity curve plots per run makes it trivial to audit results weeks later; capturing logs alongside CSVs pays off when compiling narratives.
+- MACD/Donchian without position sizing barely move the needle—highlighting the need for short-selling or broader trend filters before they’re useful.
+- ATR trailing stops (SPY) and ATR% gates (META/NVDA/MSFT) provide intuitive risk controls and help target higher-volatility regimes; thresholds are ticker-specific (e.g., 2% worked for NVDA/META, 1.2% for MSFT).
+
+### Next Week Focus
+- Integrate transaction cost + slippage modeling to see how higher-turnover filters hold up.
+- Build cross-ticker comparison dashboards (SPY vs QQQ) to spot parameter overlap.
+- Start layering ATR/volatility throttles on top of WEMA + RSI to avoid dead regimes.
+
+---
