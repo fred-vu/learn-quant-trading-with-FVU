@@ -1,0 +1,66 @@
+[
+  {
+    "label": "QQQ SMA20/50",
+    "csv_file": "data/week2/QQQ_2025-11-01_2020-01-01.csv",
+    "strategy": "ma_crossover",
+    "moving_average": "sma",
+    "fast_window": 20,
+    "slow_window": 50
+  },
+  {
+    "label": "QQQ SMA50/200",
+    "csv_file": "data/week2/QQQ_2025-11-01_2020-01-01.csv",
+    "strategy": "ma_crossover",
+    "moving_average": "sma",
+    "fast_window": 50,
+    "slow_window": 200
+  },
+  {
+    "label": "QQQ EMA21/63",
+    "csv_file": "data/week2/QQQ_2025-11-01_2020-01-01.csv",
+    "strategy": "ma_crossover",
+    "moving_average": "ema",
+    "fast_window": 21,
+    "slow_window": 63
+  },
+  {
+    "label": "QQQ WEMA21/63",
+    "csv_file": "data/week2/QQQ_2025-11-01_2020-01-01.csv",
+    "strategy": "ma_crossover",
+    "moving_average": "wema",
+    "fast_window": 21,
+    "slow_window": 63
+  },
+  {
+    "label": "QQQ WEMA14/60",
+    "csv_file": "data/week2/QQQ_2025-11-01_2020-01-01.csv",
+    "strategy": "ma_crossover",
+    "moving_average": "wema",
+    "fast_window": 14,
+    "slow_window": 60
+  },
+  {
+    "label": "QQQ WEMA10/40",
+    "csv_file": "data/week2/QQQ_2025-11-01_2020-01-01.csv",
+    "strategy": "ma_crossover",
+    "moving_average": "wema",
+    "fast_window": 10,
+    "slow_window": 40
+  },
+  {
+    "label": "QQQ WEMA8/34",
+    "csv_file": "data/week2/QQQ_2025-11-01_2020-01-01.csv",
+    "strategy": "ma_crossover",
+    "moving_average": "wema",
+    "fast_window": 8,
+    "slow_window": 34
+  },
+  {
+    "label": "QQQ WEMA5/30",
+    "csv_file": "data/week2/QQQ_2025-11-01_2020-01-01.csv",
+    "strategy": "ma_crossover",
+    "moving_average": "wema",
+    "fast_window": 5,
+    "slow_window": 30
+  }
+]

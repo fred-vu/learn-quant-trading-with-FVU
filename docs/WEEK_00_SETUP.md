@@ -12,7 +12,7 @@
 - [x] Python environment ready (test with simple script)
 - [x] C++ compiler working (test with hello world)
 - [x] Project README written
-- [ ] First 3 commits done
+- [x] First 3 commits done
 
 ---
 

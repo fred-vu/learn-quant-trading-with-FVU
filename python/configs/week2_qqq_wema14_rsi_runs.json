@@ -1,0 +1,35 @@
+[
+  {
+    "label": "QQQ WEMA14/60 RSI40-70",
+    "csv_file": "data/week2/QQQ_2025-11-01_2020-01-01.csv",
+    "strategy": "ma_crossover",
+    "moving_average": "wema",
+    "fast_window": 14,
+    "slow_window": 60,
+    "use_rsi_filter": true,
+    "ma_rsi_lower": 40,
+    "ma_rsi_upper": 70
+  },
+  {
+    "label": "QQQ WEMA14/60 RSI45-65",
+    "csv_file": "data/week2/QQQ_2025-11-01_2020-01-01.csv",
+    "strategy": "ma_crossover",
+    "moving_average": "wema",
+    "fast_window": 14,
+    "slow_window": 60,
+    "use_rsi_filter": true,
+    "ma_rsi_lower": 45,
+    "ma_rsi_upper": 65
+  },
+  {
+    "label": "QQQ WEMA14/60 RSI35-65",
+    "csv_file": "data/week2/QQQ_2025-11-01_2020-01-01.csv",
+    "strategy": "ma_crossover",
+    "moving_average": "wema",
+    "fast_window": 14,
+    "slow_window": 60,
+    "use_rsi_filter": true,
+    "ma_rsi_lower": 35,
+    "ma_rsi_upper": 65
+  }
+]

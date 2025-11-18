@@ -609,6 +609,13 @@ else:
 - Cross-language validation (Python ↔ C++ match!)
 
 **Tweet/LinkedIn post:**
+
+
+
+
+
+
+
 ```
 "Week 3-4 update: Built my first C++ trading programs! 🚀
 

@@ -560,10 +560,10 @@ Results: 62% win rate, 18.5% return 📈
 **Suggested Week 2 experiments:**
 - **US large-cap equities:** SPY or AAPL with SMA50/200 vs EMA21/63 crossovers to confirm regime differences between tech and index ETFs.
 - **US growth index:** QQQ with WEMA(14/60) crossover plus RSI filter (only take trades if RSI between 40-70) to reduce whipsaws.
-- **Mean reversion on mega-cap stocks:** NVDA/MSFT using RSI(2) or RSI(5) pullbacks combined with 20-day Bollinger bands to see whether shorter windows improve signal frequency.
+- **Mean reversion on mega-cap stocks:** NVDA/MSFT/PLTR using RSI(2) or RSI(5) pullbacks combined with 20-day Bollinger bands to see whether shorter windows improve signal frequency.
 - **US indices mean reversion:** Dow Jones ETF (DIA) or Russell 2000 ETF (IWM) with Bollinger(20, 2.5) and RSI 30/60 thresholds; compare performance to BTC tests to highlight asset-class sensitivity.
 - **Beginner-friendly add-ons:** MACD(12,26,9) crossovers on SPY (trend), Donchian 20-day breakout on QQQ (momentum), and ATR(14) trailing stops layered on top of the MA crossover to practice risk control.
-- **Volatility throttles:** Use ATR filters (enter only if ATR% of price > 2%) on SOL or NVDA to learn how to gate trades when volatility is too low/high.
+- **Volatility throttles:** Use ATR filters (enter only if ATR% of price > 2%) on META or NVDA to learn how to gate trades when volatility is too low/high.
 - **Session-based tests:** For US indices, run separate backtests on pandemic vs post-pandemic slices (split data at 2022-01-01) to see how strategies behave in different macro regimes.
 
 Use this grid as the launchpad for Week 2 experimentation: extend `test_backtest.py` with CLI presets, save logs under `results/week2/`, and layer cost/risk modeling on top of these base configs.
